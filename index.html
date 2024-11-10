@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="url" id="url_input" placeholder="Enter URL">
+    <button onclick="getRec()">Get Records</button>
+    <div id="result"></div>
+    <script>
+        const getRec = () => 
+        {
+            const url = document.getElementById("url_input").value;
+
+            fetch("/api/getdns?url=" + url)
+                .then(response => response.json())
+                .then(data => {
+                    const aRecords = data.a ? data.a.join(", ") : "No A records found.";
+                    const txtRecords = data.txt ? data.txt.map(txtArr => txtArr.join(" ")).join("<br>") : "No TXT records found.";
+
+                    document.getElementById("result").innerHTML = `
+                        <h3>DNS Records for ${url}</h3>
+                        <p><strong>A Records:</strong> ${aRecords}</p>
+                        <p><strong>TXT Records:</strong><br>${txtRecords}</p>
+                    `;
+                })
+                .catch(err => {
+                    console.log(err);
+                    document.getElementById("result").innerHTML = "An error occurred.";
+                });
+        }
+    </script>
+</body>
+</html>
